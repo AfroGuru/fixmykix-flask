@@ -1,0 +1,138 @@
+{% extends "header.html" %}
+{% block content %}
+		<link href="{{ url_for('explore.static', filename = 'css/explore.css') }}" rel="stylesheet">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		  {% if messages %}
+		    {% for category, message in messages %}
+		      <div class="alert {{ category }}"> {{ message|capitalize }} </div>
+		    {% endfor %}
+		  {% endif %}
+		{% endwith %}
+		<!-- New Post Section -->
+		<h2>New Post</h2>
+		<div class="row" id="new-post-row">
+			{% for post in final_new_post %}
+				{% if post.shoe_artist == True or post.shoe_artist == 'true' %}
+					<div class="card new-post-shoe-artist-card">
+						<p><span class="new-post-shoe-name"><a href="post/{{ post.post_id }}">{{ post.shoe_name }}</a></span><span class="new-post-username"><a href="profile/{{ post.username }}">{{ post.username }}</a></span></p>
+						<a href="post/{{ post.post_id }}"><img src="{{ post.post_pic_url }}" class="post_pic"></a>
+						<h6>${{ post.cost }}</h6>
+						<p>{{ post.shoe_description }}</p>
+						<small>{{ post.selectedTime }}</small>
+						{% if not session['account'] %}
+							<button class="btn btn-outline-primary">Get Now</button>
+						{% endif %}
+					</div>
+				{% endif %}
+				{% if post.clean_shoes == 'true' or post.clean_shoes == True%}
+					<div class="card new-post-clean-shoes-card">
+						<p>Shoe Cleaning</p>
+						<h6>${{ post.cost }}</h6>
+						<p>{{ post.selectedTime }}</p>
+						<b><a href="/profile/{{ post.username }}">{{ post.username }}</a></b>
+						{% if not session['account'] %}
+							<button class="btn btn-outline-primary">Get Now</button>
+						{% endif %}
+					</div>
+				{% endif %}
+			{% endfor %}
+		</div>
+		<hr>
+
+		<!-- Top Artist Section -->
+		<h2>Top Artist</h2>
+		<div class="row" id="top-artist-row">
+			{% for user in final_top_provider %}
+				<div class="card top-artist-card">
+						<h4><a href="/profile/{{ user.account.username }}">{{ user.account.username }}<span><img src="{{ user.account.profile_pic_url }}" class="profile-pic-thumbnail"></span></a></h4>
+						<small>{{ user.rating }}</small>
+						<p>{{ user.account.description }}</p>
+						<b>{{ user.account.city }}</b>
+						<small>{{ user.account.email }}</small>
+				</div>
+			{% endfor %}
+		</div>
+		<hr>
+
+		<!-- New Artist Section -->
+		<h2>New Artist</h2>
+		<div class="row" id="new-artist-row">
+			{% for user in final_recent_provider %}
+				<div class="card new-artist-card">
+					<h4><a href="/profile/{{ user.account.username }}">{{ user.account.username }}<span><img src="{{ user.account.profile_pic_url }}" class="profile-pic-thumbnail"></span></a></h4>
+					<small>{{ user.rating }}</small>
+					<p>{{ user.account.description }}</p>
+					<div class="wrapper">
+						<p>
+							<b>{{ user.account.city }}</b>
+							<br>
+							<small>{{ user.account.email }}</small>
+						</p>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+		<hr>
+
+		<!-- Shoe Cleaner Section -->
+		<h2>Clean your Shoes Now</h2>
+		<div class="row" id="shoe-clean-row">
+			{% for post in clean_shoes_posts %}
+				<div class="card shoe-clean-card">
+					<p>Shoe Cleaning</p>
+					<h6>${{ post.cost }}</h6>
+					<p>{{ post.selectedTime }}</p>
+					<b><a href="/profile/{{ post.username }}">{{ post.username }}</a></b>
+					{% if not session['account'] %}
+						<button class="btn btn-outline-primary">Get Now</button>
+					{% endif %}
+				</div>
+			{% endfor %}
+		</div>
+		{% if session['account'] %}
+			{% if session['account']['provider']['is_provider'] == True %}
+				<meta id="username" data-name="{{ session['account']['username'] }}">
+				<button class="btn btn-primary " id="new-post-button" data-toggle="modal" data-target="#new-post-modal">New Post</button>
+				
+				<!-- Connect Website  -->
+			    <div class="modal fade" id="new-post-modal" tabindex="-1" role="dialog">
+			      <div class="modal-dialog" role="document">
+			        <div class="modal-content">
+			          <div class="modal-header">
+			            <h5 class="modal-title">New Post</h5>
+			            <button type="button" id="dismiss-new-post-modal" class="close" data-dismiss="modal" aria-label="Close">
+			              <span aria-hidden="true">&times;</span>
+			            </button>
+			          </div>
+			          <div class="modal-body">
+			          	  <form method="POST" enctype="multipart/form-data" id="new-post-form" action="/new-post-api">
+				          	  <h6>Service:</h6>
+				        	  <select id="new-post-service-select" onchange="newPost()" name="service_type">
+				        	  	<option value="design-shoes" selected="true" value="design-shoes">Design Shoes</option>
+				        	  	<option value="clean-shoes" value="clean-shoes">Clean Shoes</option>
+				        	  </select>
+
+				        	  <!-- Shoe Design Form -->
+				        	  <div id="design-shoes-selected">
+					        	  <p><input type="text" name="new-post-shoe" id="new-post-shoe" placeholder="Shoe Ex: Jordan 11s"></p>
+					        	  <p><textarea cols="30" rows="10" name="new-post-description" id="new-post-description" placeholder="Description Ex: New color way, new design, etc."></textarea></p>
+					        	  <p>$ <input type="text" name="new-post-design-shoes-cost" id="new-post-design-shoes-cost" placeholder="Cost"></p>
+					        	  <input type="file" name="post_pic" accept="image/*">
+				        	  </div>
+
+				        	  <!-- Shoe Clean Form -->
+				        	  <div id="clean-shoes-selected">
+					        	  <p>$ <input type="text" name="new-post-clean-shoes-cost" id="new-post-clean-shoes-cost" placeholder="Cost"></p>
+				        	  </div>
+				        	  <p><input type="submit" class="btn btn-primary" id="new-post-submit-button" value="Post"></p>
+							  <p id="error-message" class="text-danger"></p>
+			          	  </form>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			    <script type="text/javascript" src="{{ url_for('explore.static', filename='js/explore_in_session.js') }}"></script>
+			{% endif %}
+		{% endif %}
+	</div>
+{% endblock %}

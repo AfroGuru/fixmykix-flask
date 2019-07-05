@@ -1,0 +1,61 @@
+{% block content %}
+	<link href="{{ url_for('profile.static', filename = 'css/profile-managed.css') }}" rel="stylesheet">
+	<div class="container-fluid">
+		<h6>{{ session['account']['email'] }}</h6>
+		<div class="row">
+			<div class="col-12">
+				<div class="card rounded-0" id="large-card">
+					<div class="row">
+						<img src="{{ session['account']['profile_pic_url'] }}" id="profile-pic">
+						<div id="info-div">
+							<p><b>@{{ session['account']['username'] }}</b></p>
+							<p>Made {{ session['account']['number_of_transactions'] }} Transactions</p>
+							<p>{{ session['account']['rating'] }} star rating</p>
+							<p>{{ session['account']['city'] }}</p>
+						</div>
+						<div class="text-right">
+							<button class="">Edit Profile</button>
+						</div>
+						<div id="user-description">
+							{% if session['account']['description'] != '' %}
+								<p>{{ session['account']['description'] }}</p>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+				<div class="card" id="sidebar-nav">
+					<p class="profile-sidebar" id="anchor-tag-messages"><span><a href="#">Messages</a></span></p>
+					<p class="profile-sidebar" id="anchor-tag-transactions"><span><a href="#">Transactions</a></span></p>
+					<p class="profile-sidebar" id="anchor-tag-settings"><span><a href="#">Settings</a></span></p>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10" id="main-div">
+				<div class="card" id="transaction-div">
+					<h5>Transaction History</h5>
+					<table id="transactions-history-table" class="table"></table>
+				</div>
+				<div class="card" id="messages-div">
+					<div>
+						<h5>Messages</h5>
+						<div class="card" id="message-history-div"></div>
+						<p id="message-input-p">
+							<input type="text" name="message-input" id="message-input" placeholder="send-message">
+							<input type="submit" name="submit-message" id="submit-message" value="Send" class="btn btn-primary">
+						</p>
+					</div>
+				</div>
+				<div class="card" id="settings-div">
+					<div>
+						<h5>Settings</h5>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="{{ url_for('profile.static', filename='js/profile-managed.js') }}"></script>
+{% endblock %}

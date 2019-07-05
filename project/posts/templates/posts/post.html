@@ -1,0 +1,18 @@
+{% extends "header.html" %}
+{% block content %}
+	<link href="{{ url_for('posts.static', filename = 'css/post.css') }}" rel="stylesheet">
+	<div class="row">
+		<div class="card rounded-0 col-xs-12 col-sm-12 col-md-6 col-lg-6">
+			<p class="display-2">{{ shoe_name }}</p>
+			<img src="{{ post_pic_url }}" id="post-pic">
+			<p>
+				<h4><b>$ {{ cost }}</b> <span id="username">{{ username }}</span></h4>
+				<p>{{ shoe_description }}</p>
+				<button class="btn btn-primary">Get Now</button>
+			</p>
+		</div>
+		<div class="card rounded-0 col-xs-12 col-sm-12 col-md-6 col-lg-6">
+			
+		</div>
+	</div>
+{% endblock %}
